@@ -1,0 +1,14 @@
+{
+  "name": "Todo server",
+  "require": {
+    "cboden/ratchet": "^0.3.6",
+    "php-di/php-di": "^5.4",
+    "miladrahimi/phprouter": "^2.3",
+    "catfan/Medoo": "^1.4"
+  },
+  "autoload": {
+    "psr-4": {
+      "Duamel\\TODO\\": "src/"
+    }
+  }
+}
