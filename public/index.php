@@ -1,46 +1,45 @@
 <?php
-
+error_reporting(E_ALL);
 use Ratchet\Server\IoServer;
 use Duamel\Todo\WebSocketController;
 use Medoo\Medoo;
-use MiladRahimi\PHPRouter\Router;
+use Klein\Klein;
 require __DIR__ . '/../vendor/autoload.php';
 $builder = new \DI\ContainerBuilder();
 $container = $builder->build();
 $database = new Medoo([
     'database_type' => 'mysql',
-    'database_name' => 'name',
+    'database_name' => 'todo',
     'server' => 'localhost',
-    'username' => 'your_username',
-    'password' => 'your_password',
+    'username' => 'root',
+    'password' => 'passwd',
 ]);
 $container->set('database', $database);
-$router = new Router;
-$router->any('/websocket', function() use ($container) {
-    $server = IoServer::factory(new WebSocketController($container), 8080);
-    $server->run();
-});
+$router = new Klein();
 
 $ajaxController = new \Duamel\Todo\AjaxController($container);
-$router->get('/api/get/{id}', 'AjaxController@get');
-$router->get('/api/getAll', 'AjaxController@getAll');
-$router->post('/api/create', 'AjaxController@create');
-$router->map('put', '/api/update', 'AjaxController@update');
-$router->map('delete', 'api/delete', 'AjaxController@delete');
+$router->with('/api', function () use ($router, $ajaxController) {
+    $router->respond('GET','/get/[:id]', [$ajaxController, 'get']);
+    $router->respond('GET', '/getAll', [$ajaxController, 'getAll']);
+    $router->respond('POST', '/create', [$ajaxController, 'create']);
+    $router->respond('POST', '/update', [$ajaxController, 'update']);
+    $router->respond('DELETE', '/delete/[:id]', [$ajaxController, 'delete']);
+});
 
-$router->get('install', function() use ($container) {
+$router->respond('GET', '/install', function() use ($container) {
     if (file_exists(__DIR__ . '/../.installed')) {
         return;
     }
     /** @var Medoo $database */
     $database = $container->get('database');
-    $database->exec('CREATE TABLE users (
+    $database->exec('CREATE TABLE todo (
                               id          INT  NOT NULL AUTO_INCREMENT  PRIMARY KEY,
                               owner       INT  NOT NULL,
                               message     TEXT,
                               isCompleted BOOL NOT NULL,
-                              date        DATETIME
+                              date        TIMESTAMP     DEFAULT CURRENT_TIMESTAMP
                               )');
-    $database->exec('CREATE INDEX owner ON users (owner)');
+    $database->exec('CREATE INDEX owner ON todo (owner)');
+    file_put_contents(__DIR__ . '/../.installed', '');
 });
 $router->dispatch();
