@@ -47,9 +47,9 @@ class TodoManager
     }
 
 
-    public function delete($entity)
+    public function delete($id)
     {
-        $this->database->delete('todo', 'id = ' . $entity->id);
+        $this->database->delete('todo', 'id = ' . $id);
     }
 
     public function read($id)

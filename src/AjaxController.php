@@ -101,12 +101,23 @@ class AjaxController
         }
     }
 
+    /**
+     * @param \Klein\Request $request
+     * @param \Klein\AbstractResponse $response
+     *
+     * @return mixed
+     */
     public function delete($request, $response)
     {
         try {
-
+            $id = $request->get('id');
+            if (empty($id)) {
+                throw new \Exception('', 400);
+            }
+            $this->manager->delete($id);
+            return $response->code(200);
         } catch (\Exception $e) {
-
+            return $response->code($e->getCode());
         }
     }
 }
