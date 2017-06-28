@@ -4,6 +4,7 @@ use Ratchet\Server\IoServer;
 use Duamel\Todo\WebSocketController;
 use Medoo\Medoo;
 use Klein\Klein;
+define('APP_SECRET_KEY', '! golf PARK LAPTOP tokyo 3 FRUIT SKYPE PARK drip # 2 + BESTBUY % 2');
 require __DIR__ . '/../vendor/autoload.php';
 $builder = new \DI\ContainerBuilder();
 $container = $builder->build();
@@ -12,7 +13,7 @@ $database = new Medoo([
     'database_name' => 'todo',
     'server' => 'localhost',
     'username' => 'root',
-    'password' => 'passwd',
+    'password' => 'forkpoons',
 ]);
 $container->set('database', $database);
 $router = new Klein();
@@ -25,6 +26,9 @@ $router->with('/api', function () use ($router, $ajaxController) {
     $router->respond('POST', '/update', [$ajaxController, 'update']);
     $router->respond('DELETE', '/delete/[:id]', [$ajaxController, 'delete']);
 });
+
+$router->respond('POST', 'login', [$ajaxController, 'login']);
+$router->respond('POST', 'register', [$ajaxController, 'register']);
 
 $router->respond('GET', '/install', function() use ($container) {
     if (file_exists(__DIR__ . '/../.installed')) {

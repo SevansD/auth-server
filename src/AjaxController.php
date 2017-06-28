@@ -120,4 +120,9 @@ class AjaxController
             return $response->code($e->getCode());
         }
     }
+
+    public function login($request, $response)
+    {
+
+    }
 }
