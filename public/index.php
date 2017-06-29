@@ -19,11 +19,13 @@ $database = new Medoo([
 ]);
 $container->set('database', $database);
 $router = new Klein();
+$router->respond('OPTIONS', function($request, $response) {
+    $response->header('Access-Control-Allow-Origin', '*');
+});
 $router->respond('*', function($request, $response) use ($container) {
     /** @var \Klein\Request $request */
     /** @var \Klein\Response $response */
-    $params = $request->paramsGet();
-    var_dump($_SERVER); die;
+    $params = $request->headers();
     if (empty($params['token']) || $params['userId'] || $params['userName']) {
         $response->body('Empty headers');
         return $response->code(401);
@@ -36,8 +38,8 @@ $router->respond('*', function($request, $response) use ($container) {
         $container->set('owner', $params['userId']);
         $container->set('userName', $params['userName']);
     } else {
-       // $response->body('Incorrect password');
-       // return $response->code(401);
+       $response->body('Incorrect password');
+       return $response->code(401);
     }
 });
 
