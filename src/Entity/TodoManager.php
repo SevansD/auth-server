@@ -16,9 +16,9 @@ class TodoManager
     }
 
     /**
-     * @param \Duamel\Todo\Entity\Todo $entity
-     *
-     * @return int|null
+     * @param Todo $entity
+     * @return int|string
+     * @throws \Exception
      */
     public function insert($entity)
     {
@@ -80,5 +80,10 @@ class TodoManager
                 ->setId($todo['id']);
         }
         return $all;
+    }
+
+    public function markAsCompleted($id, $owner)
+    {
+        $this->database->update('todo', ['isCompleted' => true], ['id' => $id, 'owner' => $owner]);
     }
 }

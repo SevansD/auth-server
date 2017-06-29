@@ -93,6 +93,7 @@ class AjaxController
      */
     public function getAll($request, $response)
     {
+        var_dump($request); die;
         try {
             $todos = $this->manager->getAll($request->owner);
             return $response->body(json_encode($todos));
@@ -121,8 +122,23 @@ class AjaxController
         }
     }
 
-    public function login($request, $response)
+    /**
+     * @param \Klein\Request $request
+     * @param \Klein\AbstractResponse $response
+     *
+     * @return mixed
+     */
+    public function markAsCompleted($request, $response)
     {
-
+        try {
+            $id = $request->get('id');
+            if (empty($id)) {
+                throw new \Exception('', 400);
+            }
+            $this->manager->markAsCompleted($id, $this->container->get('owner'));
+            return $response->code(200);
+        } catch (\Exception $e) {
+            return $response->code($e->getCode());
+        }
     }
 }
