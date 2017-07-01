@@ -15,7 +15,7 @@ class AjaxController
 
     public function __construct(ContainerInterface $container)
     {
-        $this->container = $container->get('database');
+        $this->container = $container;
         $this->manager = new TodoManager($container);
     }
 
@@ -29,7 +29,7 @@ class AjaxController
     {
         try {
             $params = $request->paramsPost();
-            $newTodo = new Todo($params['owner'], $params['message'], FALSE);
+            $newTodo = new Todo($this->container->get('owner'), $params['message'], FALSE);
             $newTodo->id = $this->manager->insert($newTodo);
             $response->code(201);
             return $response->body(json_encode($newTodo));
@@ -93,10 +93,9 @@ class AjaxController
      */
     public function getAll($request, $response)
     {
-        var_dump($request); die;
         try {
-            $todos = $this->manager->getAll($request->owner);
-            return $response->body(json_encode($todos));
+            $todos = $this->manager->getAll($this->container->get('owner'));
+            return $response->body(json_encode(['items' => $todos]));
         } catch (\Exception $e) {
             return $response->code(404);
         }
@@ -111,7 +110,7 @@ class AjaxController
     public function delete($request, $response)
     {
         try {
-            $id = $request->get('id');
+            $id = $request->id;
             if (empty($id)) {
                 throw new \Exception('', 400);
             }
@@ -131,11 +130,31 @@ class AjaxController
     public function markAsCompleted($request, $response)
     {
         try {
-            $id = $request->get('id');
+            $id = $request->param('id');
             if (empty($id)) {
                 throw new \Exception('', 400);
             }
             $this->manager->markAsCompleted($id, $this->container->get('owner'));
+            return $response->code(200);
+        } catch (\Exception $e) {
+            return $response->code($e->getCode());
+        }
+    }
+
+    /**
+     * @param \Klein\Request $request
+     * @param \Klein\AbstractResponse $response
+     *
+     * @return mixed
+     */
+    public function markAsUnCompleted($request, $response)
+    {
+        try {
+            $id = $request->param('id');
+            if (empty($id)) {
+                throw new \Exception('', 400);
+            }
+            $this->manager->markAsUnCompleted($id, $this->container->get('owner'));
             return $response->code(200);
         } catch (\Exception $e) {
             return $response->code($e->getCode());

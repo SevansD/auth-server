@@ -49,7 +49,7 @@ class TodoManager
 
     public function delete($id)
     {
-        $this->database->delete('todo', 'id = ' . $id);
+        $this->database->delete('todo', ['id' =>  $id]);
     }
 
     public function read($id)
@@ -73,7 +73,7 @@ class TodoManager
      */
     public function getAll($owner)
     {
-        $data = $this->database->select('todo', '*', 'owner = ' . $owner);
+        $data = $this->database->select('todo', '*', ['todo.owner' => $owner]);
         $all = [];
         foreach ($data as $todo) {
             $all[] = (new Todo($todo['owner'], $todo['message'], $todo['isCompleted']))
@@ -85,5 +85,10 @@ class TodoManager
     public function markAsCompleted($id, $owner)
     {
         $this->database->update('todo', ['isCompleted' => true], ['id' => $id, 'owner' => $owner]);
+    }
+
+    public function markAsUnCompleted($id, $owner)
+    {
+        $this->database->update('todo', ['isCompleted' => false], ['id' => $id, 'owner' => $owner]);
     }
 }
