@@ -15,8 +15,8 @@ $database = new Medoo([
     'database_type' => 'mysql',
     'database_name' => 'todo',
     'server' => 'localhost',
-    'username' => 'root',
-    'password' => 'forkpoons',
+    'username' => '',
+    'password' => '',
 ]);
 $container->set('database', $database);
 $router = new Klein();
