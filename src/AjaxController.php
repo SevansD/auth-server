@@ -48,7 +48,7 @@ class AjaxController
     {
         try {
             $params = $request->paramsPost();
-            if (empty($params['id'])) {
+            if (!isset($params['id'])) {
                 throw new \Exception('', 400);
             }
             $todo = $this->manager->read($params['id']);
@@ -111,7 +111,7 @@ class AjaxController
     {
         try {
             $id = $request->id;
-            if (empty($id)) {
+            if (!isset($id)) {
                 throw new \Exception('', 400);
             }
             $this->manager->delete($id);
@@ -131,7 +131,7 @@ class AjaxController
     {
         try {
             $id = $request->param('id');
-            if (empty($id)) {
+            if (!isset($id)) {
                 throw new \Exception('', 400);
             }
             $this->manager->markAsCompleted($id, $this->container->get('owner'));
@@ -151,7 +151,7 @@ class AjaxController
     {
         try {
             $id = $request->param('id');
-            if (empty($id)) {
+            if (!isset($id)) {
                 throw new \Exception('', 400);
             }
             $this->manager->markAsUnCompleted($id, $this->container->get('owner'));

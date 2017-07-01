@@ -4,12 +4,21 @@ namespace Duamel\Todo\Entity;
 
 use Psr\Container\ContainerInterface;
 
+/**
+ * Class TodoManager
+ * @package Duamel\Todo\Entity
+ * Class for save entity into storage
+ */
 class TodoManager
 {
 
     /** @var \Medoo\Medoo */
     private $database;
 
+    /**
+     * TodoManager constructor.
+     * @param ContainerInterface $container
+     */
     public function __construct(ContainerInterface $container)
     {
         $this->database = $container->get('database');
@@ -34,6 +43,11 @@ class TodoManager
         throw new \Exception();
     }
 
+    /**
+     * @param $entity
+     *
+     * @return Todo
+     */
     public function update($entity)
     {
         $this->database->update(
@@ -44,14 +58,22 @@ class TodoManager
             ],
             ['id' => $entity->id]
         );
+        return $this->read($entity->id);
     }
 
-
+    /**
+     * @param $id
+     */
     public function delete($id)
     {
-        $this->database->delete('todo', ['id' =>  $id]);
+        $this->database->delete('todo', ['id' => $id]);
     }
 
+    /**
+     * @param int $id
+     * @return Todo
+     * @throws \Exception
+     */
     public function read($id)
     {
         if (empty($id)) {
@@ -82,11 +104,19 @@ class TodoManager
         return $all;
     }
 
+    /**
+     * @param int $id
+     * @param int $owner
+     */
     public function markAsCompleted($id, $owner)
     {
         $this->database->update('todo', ['isCompleted' => true], ['id' => $id, 'owner' => $owner]);
     }
 
+    /**
+     * @param int $id
+     * @param int $owner
+     */
     public function markAsUnCompleted($id, $owner)
     {
         $this->database->update('todo', ['isCompleted' => false], ['id' => $id, 'owner' => $owner]);
