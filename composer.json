@@ -1,7 +1,6 @@
 {
   "name": "Todo server",
   "require": {
-    "cboden/ratchet": "^0.3.6",
     "php-di/php-di": "^5.4",
     "klein/klein": "*",
     "catfan/Medoo": "^1.4"
